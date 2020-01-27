@@ -35,7 +35,7 @@ func main() {
 	}
 	fmt.Println("Successfully Unmarshalled sample.json")
 	fmt.Println(len(players))
-	player := players[0]
+	player := players[2]
 	fmt.Println(player)
 	scoreConfig.Score(&player)
 	fmt.Println(player)

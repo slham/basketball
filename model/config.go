@@ -24,23 +24,25 @@ type ScoreConfig struct {
 
 func (config *ScoreConfig) Score(player *Player) {
 	score := float32(0.0)
+	numGames := float32(player.Gms)
 
-	score += player.Fgm * config.Fgm
-	score += player.Fga * config.Fga
+	score += float32(player.Min) / numGames * config.Min
+	score += player.Fgm / numGames * config.Fgm
+	score += player.Fga / numGames * config.Fga
 	score += player.Fgp * config.Fgp
-	score += player.Ftm * config.Ftm
-	score += player.Fta * config.Fta
+	score += player.Ftm / numGames * config.Ftm
+	score += player.Fta / numGames * config.Fta
 	score += player.Ftp * config.Ftp
-	score += player.Tpm * config.Ftm
-	score += player.Tpa * config.Tpa
+	score += player.Tpm / numGames * config.Ftm
+	score += player.Tpa / numGames * config.Tpa
 	score += player.Tpp * config.Tpp
 	score += player.Reb * config.Reb
 	score += player.Ass * config.Ass
 	score += player.Stl * config.Stl
 	score += player.Blk * config.Blk
 	score += player.Tvs * config.Tvs
-	score += player.Dds * config.Dds
-	score += player.Pts * config.Pts
+	score += player.Dds / numGames * config.Dds
+	score += player.Pts / numGames * config.Pts
 
 	player.Score = score
 	player.UpdatedDateTime = time.Now()

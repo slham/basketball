@@ -10,7 +10,6 @@ type Player struct {
 	Name            string    `json:"Name" yaml:"name"`
 	Position        string    `json:"Position" yaml:"pos"`
 	Min             int       `json:"Minutes" yaml:"min"`
-	Sec             int       `json:"Seconds"`
 	Fgm             float32   `json:"FieldGoalsMade" yaml:"fgm"`
 	Fga             float32   `json:"FieldGoalsAttempted" yaml:"fga"`
 	Fgp             float32   `json:"FieldGoalsPercentage" yaml:"fgp"`
@@ -20,13 +19,14 @@ type Player struct {
 	Tpm             float32   `json:"ThreePointersMade" yaml:"tpm"`
 	Tpa             float32   `json:"ThreePointersAttempted" yaml:"tpa"`
 	Tpp             float32   `json:"ThreePointersPercentage" yaml:"tpp"`
-	Reb             float32   `json:"Rebounds" yaml:"reb"`
-	Ass             float32   `json:"Assists" yaml:"ass"`
-	Stl             float32   `json:"Steals" yaml:"stl"`
-	Blk             float32   `json:"Blocks" yaml:"bks"`
-	Tvs             float32   `json:"Turnovers" yaml:"tvs"`
+	Reb             float32   `json:"TotalReboundsPercentage" yaml:"reb"`
+	Ass             float32   `json:"AssistsPercentage" yaml:"ass"`
+	Stl             float32   `json:"StealsPercentage" yaml:"stl"`
+	Blk             float32   `json:"BlocksPercentage" yaml:"bks"`
+	Tvs             float32   `json:"TurnOversPercentage" yaml:"tvs"`
 	Dds             float32   `json:"DoubleDoubles" yaml:"dds"`
 	Pts             float32   `json:"Points" yaml:"pts"`
+	Gms             int       `json:"Games" yaml:"gms"`
 	CreatedDateTime time.Time `yaml:"createdDateTime"`
 	UpdatedDateTime time.Time `yaml:"updatedDateTime"`
 	Score           float32   `yaml:"score"`
