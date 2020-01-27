@@ -34,11 +34,14 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Successfully Unmarshalled sample.json")
-	fmt.Println(len(players))
-	player := players[2]
-	fmt.Println(player)
-	scoreConfig.Score(&player)
-	fmt.Println(player)
+	var store = make(map[int]float32, 0)
+	for _, player := range players {
+		scoreConfig.Score(&player)
+		store[player.Id] = player.Score
+	}
+
+	log.Println(fmt.Sprintf("store: %v", store))
+
 }
 
 func loadScoreConfig() model.ScoreConfig {
