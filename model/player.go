@@ -24,7 +24,7 @@ type Player struct {
 	Ass             float32   `json:"Assists" yaml:"ass"`
 	Stl             float32   `json:"Steals" yaml:"stl"`
 	Blk             float32   `json:"Blocks" yaml:"bks"`
-	Turnovers       float32   `json:"Turnovers" yaml:"tvs"`
+	Tvs             float32   `json:"Turnovers" yaml:"tvs"`
 	Dds             float32   `json:"DoubleDoubles" yaml:"dds"`
 	Pts             float32   `json:"Points" yaml:"pts"`
 	CreatedDateTime time.Time `yaml:"createdDateTime"`
