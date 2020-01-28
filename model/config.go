@@ -45,5 +45,6 @@ func (config *ScoreConfig) Score(player *Player) {
 	score += player.Pts / numGames * config.Pts
 
 	player.Score = score
+	player.CreatedDateTime = time.Now()
 	player.UpdatedDateTime = time.Now()
 }

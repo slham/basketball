@@ -2,13 +2,16 @@ package main
 
 import (
 	"basketball/model"
+	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"github.com/meirf/gopart"
+	yaml "gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
 	"os"
-	//"gopkg.in/yaml.v2"
+	"github.com/golang-collections/collections/trie"
+	"time"
 )
 
 func main() {
@@ -35,20 +38,49 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Successfully Unmarshalled sample.json")
-	var store = make(map[int]float32, 0)
+	//var store = make(map[int]float32, 0)
+	myTrie := trie.New()
+	myTrie.Init()
 	for indexRange := range gopart.Partition(len(players), 10){
-		scorePlayers(scoreConfig, players[indexRange.Low:indexRange.High], store)
+		go scorePlayers(scoreConfig, players[indexRange.Low:indexRange.High], myTrie)
 	}
 
-	log.Println(fmt.Sprintf("store: %v", store))
+
+	<-time.After(time.Second * 5)
+	log.Println(fmt.Sprintf("store: %v", myTrie.String()))
 
 }
 
-func scorePlayers(scoreConfig model.ScoreConfig, players []model.Player, store map[int]float32){
+func scorePlayers(scoreConfig model.ScoreConfig, players []model.Player, t *trie.Trie){
 	for _, player := range players {
 		scoreConfig.Score(&player)
-		store[player.Id] = player.Score
+		key := hash(player)
+		storePlayer(player)
+		t.Insert(key, player)
 	}
+}
+
+func storePlayer(player model.Player) {
+	file, err := os.Create(fmt.Sprintf("data/%d_%v.yaml", player.Id, player.UpdatedDateTime.Unix()))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	bytes, err := yaml.Marshal(player)
+	if err != nil {
+		log.Fatal(err)
+	}
+	file.Write(bytes)
+	file.Sync()
+}
+
+func hash(player model.Player) [16]byte {
+	bytes, err := yaml.Marshal(player)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return md5.Sum(bytes)
 }
 
 func loadScoreConfig() model.ScoreConfig {
