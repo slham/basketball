@@ -5,40 +5,40 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
+	"github.com/golang-collections/collections/trie"
 	"github.com/meirf/gopart"
 	yaml "gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
 	"os"
-	"github.com/golang-collections/collections/trie"
+	"sort"
 	"time"
 )
+type ByScore []model.Player
+func (score ByScore) Len() int {return len(score)}
+func (score ByScore) Swap(i, j int) {score[i], score[j] = score[j], score[i]}
+func (score ByScore) Less(i, j int) bool {return score[i].Score < score[j].Score}
 
 func main() {
 	var players = make([]model.Player, 0)
 	scoreConfig := loadScoreConfig()
 
 	jsonFile, err := os.Open("sample.json")
-	// if we os.Open returns an error then handle it
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("Successfully Opened sample.json")
-	// defer the closing of our jsonFile so that we can parse it later on
 	defer jsonFile.Close()
 	byteValue, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// we unmarshal our byteArray which contains our
-	// jsonFile's content into 'users' which we defined above
 	err = json.Unmarshal(byteValue, &players)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("Successfully Unmarshalled sample.json")
-	//var store = make(map[int]float32, 0)
 	myTrie := trie.New()
 	myTrie.Init()
 	for indexRange := range gopart.Partition(len(players), 10){
@@ -46,9 +46,38 @@ func main() {
 	}
 
 
-	<-time.After(time.Second * 5)
-	log.Println(fmt.Sprintf("store: %v", myTrie.String()))
+	<-time.After(time.Second * 3)
+	//log.Println(fmt.Sprintf("store: %v", myTrie.String()))
 
+	sorted := mySort(myTrie)
+	fmt.Println(fmt.Sprintf("sorted players: %v", sorted))
+	for _, player := range sorted{
+		fmt.Println(fmt.Sprintf("%v, %v", player.Name, player.Score))
+	}
+}
+
+func mySort(t *trie.Trie)[]model.Player{
+	var players = make([]model.Player, 0)
+
+	t.Do(func(k, v interface{}) bool {
+		//fmt.Println(fmt.Sprintf("adding %v", k))
+		players = append(players, v.(model.Player))
+		return true
+	})
+
+	//lt := func(a, b interface{})bool {
+	//	//reversing sort to have player with highest score first in list
+	//	return a.(model.Player).Score < a.(model.Player).Score
+	//}
+
+	sort.Sort(ByScore(players))
+
+	//err := timsort.Sort(players, lt)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+
+	return players
 }
 
 func scorePlayers(scoreConfig model.ScoreConfig, players []model.Player, t *trie.Trie){
