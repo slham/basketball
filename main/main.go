@@ -4,6 +4,7 @@ import (
 	"basketball/model"
 	"encoding/json"
 	"fmt"
+	"github.com/meirf/gopart"
 	"io/ioutil"
 	"log"
 	"os"
@@ -35,13 +36,19 @@ func main() {
 	}
 	fmt.Println("Successfully Unmarshalled sample.json")
 	var store = make(map[int]float32, 0)
-	for _, player := range players {
-		scoreConfig.Score(&player)
-		store[player.Id] = player.Score
+	for indexRange := range gopart.Partition(len(players), 10){
+		scorePlayers(scoreConfig, players[indexRange.Low:indexRange.High], store)
 	}
 
 	log.Println(fmt.Sprintf("store: %v", store))
 
+}
+
+func scorePlayers(scoreConfig model.ScoreConfig, players []model.Player, store map[int]float32){
+	for _, player := range players {
+		scoreConfig.Score(&player)
+		store[player.Id] = player.Score
+	}
 }
 
 func loadScoreConfig() model.ScoreConfig {
