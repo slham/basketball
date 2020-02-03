@@ -43,10 +43,17 @@ func scorePlayers(config model.ScoreConfig, t *trie.Trie)[]model.Player{
 	var players = make([]model.Player, 0)
 
 	t.Do(func(k, v interface{}) bool {
-		//fmt.Println(fmt.Sprintf("adding %v", k))
 		player := v.(model.Player)
-		config.Score(&player)
-		players = append(players, player)
+		if player.Gms >= 15 {
+			config.Score(&player)
+			players = append(players, model.Player{
+				Id: player.Id,
+				Name: player.Name,
+				Score: player.Score,
+				CreatedDateTime:player.CreatedDateTime,
+				UpdatedDateTime:player.UpdatedDateTime,
+			})
+		}
 		return true
 	})
 

@@ -6,6 +6,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"log"
 	"net/http"
+	//"github.com/robfig/cron/v3"
 )
 
 type App struct {
@@ -45,7 +46,7 @@ func (a *App) Run() {
 		players := ratePlayers(scoreConfig, a.store)
 
 		//marshall response body
-		bytes, err := yaml.Marshal(players)
+		bytes, err := yaml.Marshal(players[len(players)-50:])
 		if err != nil {
 			msg := fmt.Sprintf("error rating players: %v", err)
 			log.Println(msg)

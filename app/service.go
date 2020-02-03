@@ -6,9 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/golang-collections/collections/trie"
+	"github.com/meirf/gopart"
 	"io/ioutil"
 	"log"
 	"os"
+	"time"
 )
 
 func fetchData(t *trie.Trie)error{
@@ -52,13 +54,8 @@ func fetchFromFile(t *trie.Trie)error{
 	}
 
 	//hash and store in trie
-	for _, player := range players {
-		key, err := hash(player)
-		if err != nil{
-			return err
-		}
-		storePlayer(player)
-		t.Insert(key, player)
+	for indexRange := range gopart.Partition(len(players), 10){
+		go save(players[indexRange.Low:indexRange.High], t)
 	}
 
 	return nil
@@ -66,4 +63,19 @@ func fetchFromFile(t *trie.Trie)error{
 
 func ratePlayers(config model.ScoreConfig, t *trie.Trie)[]model.Player{
 	return scorePlayers(config, t)
+}
+
+func save(players []model.Player, t *trie.Trie){
+	for _, player := range players {
+		now := time.Now()
+		player.CreatedDateTime = now
+		player.UpdatedDateTime = now
+		key, err := hash(player)
+		if err != nil{
+			log.Println("could not hash player")
+			log.Println(err)
+		}
+		storePlayer(player)
+		t.Insert(key, player)
+	}
 }
