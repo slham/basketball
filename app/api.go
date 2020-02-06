@@ -3,10 +3,10 @@ package app
 import (
 	"fmt"
 	"github.com/golang-collections/collections/trie"
+	"github.com/robfig/cron/v3"
 	"gopkg.in/yaml.v2"
 	"log"
 	"net/http"
-	//"github.com/robfig/cron/v3"
 )
 
 type App struct {
@@ -20,8 +20,13 @@ func (a *App) Initialize() bool {
 	if err != nil {
 		log.Fatal(err)
 	}
-	//fill trie
-	//set cron job
+	c := cron.New()
+	_, err = c.AddFunc("CRON_TZ=America/New_York 00 11 * * *", func() {
+		err := fetchData(a.store)
+		if err != nil {
+			log.Println(err)
+		}
+	})
 	return true
 }
 
@@ -46,7 +51,7 @@ func (a *App) Run() {
 		players := ratePlayers(scoreConfig, a.store)
 
 		//marshall response body
-		bytes, err := yaml.Marshal(players[len(players)-50:])
+		bytes, err := yaml.Marshal(players)
 		if err != nil {
 			msg := fmt.Sprintf("error rating players: %v", err)
 			log.Println(msg)

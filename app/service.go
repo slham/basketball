@@ -3,12 +3,12 @@ package app
 import (
 	"basketball/model"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/golang-collections/collections/trie"
 	"github.com/meirf/gopart"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"time"
 )
@@ -22,8 +22,35 @@ func fetchData(t *trie.Trie)error{
 	return nil
 }
 
+//TODO: implement retry logic
 func fetchFromSource(t *trie.Trie)error{
-	return errors.New("dummy error")
+	url := fmt.Sprintf("https://api.sportsdata.io/v3/nba/stats/json/PlayerSeasonStats/2020?key=%s", os.Getenv("NBA_API_KEY"))
+	res, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+	log.Println(res.Header)
+	log.Println()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	players := make([]model.Player, 0)
+
+	err = json.Unmarshal(body, &players)
+	if err != nil {
+		return err
+	}
+
+	//hash and store in trie
+	for indexRange := range gopart.Partition(len(players), 10){
+		go save(players[indexRange.Low:indexRange.High], t)
+	}
+
+	return nil
 }
 
 func fetchFromS3(){
