@@ -28,6 +28,9 @@ func (a *App) Initialize() bool {
 			log.Println(err)
 		}
 	})
+
+	log.Println("Up and Running!")
+
 	return true
 }
 
@@ -75,6 +78,18 @@ func (a *App) Run() {
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/yaml")
 		_, _ = w.Write(bytes)
+	})
+
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			_, _ = w.Write([]byte("use root path to see API documentation"))
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/yaml")
+		_, _ = w.Write([]byte("Skole!"))
 	})
 
 	if err := http.ListenAndServe(":80", nil); err != nil {

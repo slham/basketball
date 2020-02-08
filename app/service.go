@@ -25,7 +25,6 @@ func fetchFromSource(t *trie.Trie) error {
 		return err
 	}
 	defer res.Body.Close()
-	log.Println(res.Header)
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
