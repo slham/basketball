@@ -1,6 +1,7 @@
 package app
 
 import (
+	"basketball/model"
 	"fmt"
 	"github.com/golang-collections/collections/trie"
 	"github.com/robfig/cron/v3"
@@ -32,13 +33,23 @@ func (a *App) Initialize() bool {
 
 func (a *App) Run() {
 	http.HandleFunc("/ratings", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != "POST"{
+		if r.Method != "POST" {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			_, _ = w.Write([]byte("use root path to see API documentation"))
 			return
 		}
 
-		scoreConfig, err := validateScoreConfig(r)
+		var scoreConfig model.ScoreConfig
+		err := yaml.NewDecoder(r.Body).Decode(&scoreConfig)
+		if err != nil {
+			msg := fmt.Sprintf("error reading request body: %v", err)
+			log.Println(msg)
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = w.Write([]byte("all fields must be populated with a number between 0.0 and 10.0"))
+			return
+		}
+
+		err = validateScoreConfig(scoreConfig)
 		if err != nil {
 			msg := fmt.Sprintf("error reading request body: %v", err)
 			log.Println(msg)
