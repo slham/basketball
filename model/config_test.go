@@ -48,3 +48,7 @@ func TestScoreConfig_Score(t *testing.T) {
 	config.Score(&player)
 	assert.Equal(t, float32(379.75955), player.Score)
 }
+
+func TestRound(t *testing.T){
+	assert.Equal(t, float32(343.59),round(float32(343.5851), 2))
+}

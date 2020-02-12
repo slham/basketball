@@ -12,7 +12,7 @@ type ByScore []model.Player
 
 func (score ByScore) Len() int           { return len(score) }
 func (score ByScore) Swap(i, j int)      { score[i], score[j] = score[j], score[i] }
-func (score ByScore) Less(i, j int) bool { return score[i].Score < score[j].Score }
+func (score ByScore) Less(i, j int) bool { return score[i].Score > score[j].Score }
 
 func hash(player model.Player) ([16]byte, error) {
 	bytes, err := yaml.Marshal(player)

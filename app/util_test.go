@@ -142,9 +142,9 @@ func TestScorePlayers(t *testing.T) {
 	res := scorePlayers(config, testTrie)
 	assert.Equal(t, 2, len(res))
 	p1, p2 := res[0], res[1]
-	assert.Equal(t, true, p1.Id == 0)
-	assert.Equal(t, true, p2.Id == 1)
+	assert.Equal(t, true, p1.Id == 1)
+	assert.Equal(t, true, p2.Id == 0)
 	assert.Equal(t, true, p1.Score > 0)
 	assert.Equal(t, true, p2.Score > 0)
-	assert.Equal(t, true, p1.Score < p2.Score)
+	assert.Equal(t, true, p1.Score > p2.Score)
 }

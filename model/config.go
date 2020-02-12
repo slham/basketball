@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"math"
+	"time"
+)
 
 type ScoreConfig struct {
 	Min float32 `yaml:"min" validate:"min=0,max=10,required"`
@@ -16,7 +19,7 @@ type ScoreConfig struct {
 	Reb float32 `yaml:"reb"  validate:"min=0,max=10,required"`
 	Ass float32 `yaml:"ass"  validate:"min=0,max=10,required"`
 	Stl float32 `yaml:"stl"  validate:"min=0,max=10,required"`
-	Blk float32 `yaml:"bks"  validate:"min=0,max=10,required"`
+	Blk float32 `yaml:"blk"  validate:"min=0,max=10,required"`
 	Tvs float32 `yaml:"tvs"  validate:"min=0,max=10,required"`
 	Dds float32 `yaml:"dds"  validate:"min=0,max=10,required"`
 	Pts float32 `yaml:"pts"  validate:"min=0,max=10,required"`
@@ -44,6 +47,11 @@ func (config *ScoreConfig) Score(player *Player) {
 	score += player.Dds / numGames * config.Dds
 	score += player.Pts / numGames * config.Pts
 
-	player.Score = score
+	player.Score = round(score, 2)
 	player.UpdatedDateTime = time.Now()
+}
+
+func round(val float32, precision int)float32{
+	pow10 := math.Pow10(precision)
+	return float32(math.Round(float64(val) * pow10) / pow10)
 }
