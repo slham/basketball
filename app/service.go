@@ -20,6 +20,7 @@ func fetchData(t *trie.Trie) error {
 //TODO: implement retry logic
 func fetchFromSource(t *trie.Trie) error {
 	url := fmt.Sprintf("https://api.sportsdata.io/v3/nba/stats/json/PlayerSeasonStats/2020?key=%s", os.Getenv("NBA_API_KEY"))
+	log.Println(fmt.Sprintf("sending to %v", url))
 	res, err := http.Get(url)
 	if err != nil {
 		return err

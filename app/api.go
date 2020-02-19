@@ -61,6 +61,7 @@ func (a *App) Run() {
 			return
 		}
 
+		log.Println(fmt.Sprintf("rating players for current config: %v", scoreConfig))
 		//rate players using config
 		players := ratePlayers(scoreConfig, a.store)
 

@@ -16,9 +16,9 @@ echo "logging in to aws"
 $(aws ecr get-login --no-include-email --region us-west-2)
 
 echo "tagging image"
-docker tag basketball:latest repo_uri
+docker tag basketball:latest $repo_uri
 
 echo "pushing image"
-doker push repo_uri
+docker push $repo_uri:latest
 
 echo "Finito!"
