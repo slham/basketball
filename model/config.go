@@ -6,7 +6,7 @@ import (
 )
 
 type ScoreConfig struct {
-	Min float32 `yaml:"min" validate:"min=0,max=10,required"`
+	Min float32 `yaml:"min"  validate:"min=0,max=10,required"`
 	Fgm float32 `yaml:"fgm"  validate:"min=0,max=10,required"`
 	Fga float32 `yaml:"fga"  validate:"min=0,max=10,required"`
 	Fgp float32 `yaml:"fgp"  validate:"min=0,max=10,required"`
@@ -51,7 +51,7 @@ func (config *ScoreConfig) Score(player *Player) {
 	player.UpdatedDateTime = time.Now()
 }
 
-func round(val float32, precision int)float32{
+func round(val float32, precision int) float32 {
 	pow10 := math.Pow10(precision)
-	return float32(math.Round(float64(val) * pow10) / pow10)
+	return float32(math.Round(float64(val)*pow10) / pow10)
 }

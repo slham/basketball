@@ -3,6 +3,7 @@ package app
 import (
 	"basketball/model"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/golang-collections/collections/trie"
 	"github.com/meirf/gopart"
@@ -18,17 +19,24 @@ func fetchData(t *trie.Trie) error {
 }
 
 //TODO: implement retry logic
+//#downstream_pull
 func fetchFromSource(t *trie.Trie) error {
-	url := fmt.Sprintf("https://api.sportsdata.io/v3/nba/stats/json/PlayerSeasonStats/2020?key=%s", os.Getenv("NBA_API_KEY"))
-	log.Println(fmt.Sprintf("sending to %v", url))
+	key := os.Getenv("NBA_API_KEY")
+	if key == "" {
+		return errors.New("unable to load environment variables")
+	}
+
+	url := fmt.Sprintf("https://api.sportsdata.io/v3/nba/stats/json/PlayerSeasonStats/2020?key=%s", key)
 	res, err := http.Get(url)
 	if err != nil {
+		log.Println(fmt.Sprintf("error sending to %v", url))
 		return err
 	}
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
+		log.Println("unable to read player stats response")
 		return err
 	}
 
@@ -36,14 +44,22 @@ func fetchFromSource(t *trie.Trie) error {
 
 	err = json.Unmarshal(body, &players)
 	if err != nil {
+		log.Println(string(body))
+		log.Println("unable to convert players")
 		return err
 	}
 
-	//hash and store in trie
-	for indexRange := range gopart.Partition(len(players), 10) {
-		go save(players[indexRange.Low:indexRange.High], t)
-	}
+	//#async
+	c := make(chan bool)
+	go func() {
+		//hash and store in trie
+		for indexRange := range gopart.Partition(len(players), 10) {
+			go save(players[indexRange.Low:indexRange.High], t)
+		}
+		c <- true
+	}()
 
+	<-c
 
 	return nil
 }
@@ -53,6 +69,7 @@ func ratePlayers(config model.ScoreConfig, t *trie.Trie) []model.Player {
 }
 
 func save(players []model.Player, t *trie.Trie) {
+	log.Println("storing players")
 	for _, player := range players {
 		now := time.Now()
 		player.CreatedDateTime = now
