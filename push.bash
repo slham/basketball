@@ -13,7 +13,7 @@ echo "building image"
 docker build --rm -t "basketball" --build-arg ex_path=linux/amd64 .
 
 echo "logging in to aws"
-$(aws ecr get-login --no-include-email --region us-west-2)
+$(aws ecr get-login --no-include-email --region us-west-2 --profile tharivol)
 
 echo "tagging image"
 docker tag basketball:latest $repo_uri
