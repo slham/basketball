@@ -6,23 +6,23 @@ import (
 )
 
 type ScoreConfig struct {
-	Min float32 `yaml:"min"  validate:"min=0,max=10,required"`
-	Fgm float32 `yaml:"fgm"  validate:"min=0,max=10,required"`
-	Fga float32 `yaml:"fga"  validate:"min=0,max=10,required"`
-	Fgp float32 `yaml:"fgp"  validate:"min=0,max=10,required"`
-	Ftm float32 `yaml:"ftm"  validate:"min=0,max=10,required"`
-	Fta float32 `yaml:"fta"  validate:"min=0,max=10,required"`
-	Ftp float32 `yaml:"ftp"  validate:"min=0,max=10,required"`
-	Tpm float32 `yaml:"tpm"  validate:"min=0,max=10,required"`
-	Tpa float32 `yaml:"tpa"  validate:"min=0,max=10,required"`
-	Tpp float32 `yaml:"tpp"  validate:"min=0,max=10,required"`
-	Reb float32 `yaml:"reb"  validate:"min=0,max=10,required"`
-	Ass float32 `yaml:"ass"  validate:"min=0,max=10,required"`
-	Stl float32 `yaml:"stl"  validate:"min=0,max=10,required"`
-	Blk float32 `yaml:"blk"  validate:"min=0,max=10,required"`
-	Tvs float32 `yaml:"tvs"  validate:"min=0,max=10,required"`
-	Dds float32 `yaml:"dds"  validate:"min=0,max=10,required"`
-	Pts float32 `yaml:"pts"  validate:"min=0,max=10,required"`
+	Min float32 `yaml:"min"  validate:"min=0,max=10"`
+	Fgm float32 `yaml:"fgm"  validate:"min=0,max=10"`
+	Fga float32 `yaml:"fga"  validate:"min=0,max=10"`
+	Fgp float32 `yaml:"fgp"  validate:"min=0,max=10"`
+	Ftm float32 `yaml:"ftm"  validate:"min=0,max=10"`
+	Fta float32 `yaml:"fta"  validate:"min=0,max=10"`
+	Ftp float32 `yaml:"ftp"  validate:"min=0,max=10"`
+	Tpm float32 `yaml:"tpm"  validate:"min=0,max=10"`
+	Tpa float32 `yaml:"tpa"  validate:"min=0,max=10"`
+	Tpp float32 `yaml:"tpp"  validate:"min=0,max=10"`
+	Reb float32 `yaml:"reb"  validate:"min=0,max=10"`
+	Ass float32 `yaml:"ass"  validate:"min=0,max=10"`
+	Stl float32 `yaml:"stl"  validate:"min=0,max=10"`
+	Blk float32 `yaml:"blk"  validate:"min=0,max=10"`
+	Tvs float32 `yaml:"tvs"  validate:"min=0,max=10"`
+	Dds float32 `yaml:"dds"  validate:"min=0,max=10"`
+	Pts float32 `yaml:"pts"  validate:"min=0,max=10"`
 }
 
 func (config *ScoreConfig) Score(player *Player) {

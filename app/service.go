@@ -64,8 +64,8 @@ func fetchFromSource(t *trie.Trie) error {
 	return nil
 }
 
-func ratePlayers(config model.ScoreConfig, t *trie.Trie) []model.Player {
-	return scorePlayers(config, t)
+func (a *App) ratePlayers(config model.ScoreConfig) []model.Player {
+	return scorePlayers(config, a.store)
 }
 
 func save(players []model.Player, t *trie.Trie) {

@@ -4,6 +4,7 @@ import (
 	"basketball/model"
 	"fmt"
 	"github.com/golang-collections/collections/trie"
+	"github.com/gorilla/mux"
 	"github.com/robfig/cron/v3"
 	"gopkg.in/yaml.v2"
 	"log"
@@ -12,18 +13,21 @@ import (
 
 type App struct {
 	store *trie.Trie
+	Router       *mux.Router
 }
 
-//#startup
 func (a *App) Initialize() bool {
 	log.Println("application initializing")
+	a.Router = mux.NewRouter()
 	a.store = trie.New()
 	a.store.Init()
+	initializeRoutes(a)
 	err := fetchData(a.store)
 	if err != nil {
 		log.Println("unable to fetch player data")
 		log.Fatal(err)
 	}
+	//TODO: remove when fetch and feed lambdas are built
 	c := cron.New()
 	_, err = c.AddFunc("CRON_TZ=America/New_York 00 11 * * *", func() {
 		err := fetchData(a.store)
@@ -38,16 +42,22 @@ func (a *App) Initialize() bool {
 	return true
 }
 
-//#startup
 func (a *App) Run() {
-	//#upstream_pushing
-	http.HandleFunc("/ratings", func(w http.ResponseWriter, r *http.Request) {
+	if err := http.ListenAndServe(":80", a.Router); err != nil {
+		log.Println("failed to boot server")
+		log.Fatal(err)
+	}
+}
+
+func initializeRoutes(a *App){
+	a.Router.Methods("GET").Path("/health").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		log.Println("Skole!")
+		_, _ = w.Write([]byte("Skole!"))
+	})
+
+	a.Router.Methods("POST").Path("/ratings").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Println("ratings request received")
-		if r.Method != "POST" {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			_, _ = w.Write([]byte("use root path to see API documentation"))
-			return
-		}
 
 		var scoreConfig model.ScoreConfig
 		err := yaml.NewDecoder(r.Body).Decode(&scoreConfig)
@@ -59,19 +69,18 @@ func (a *App) Run() {
 			return
 		}
 
-		//this block of code is causing zeros to throw errors because of float32 0 value
-		//err = validateScoreConfig(scoreConfig)
-		//if err != nil {
-		//	msg := fmt.Sprintf("invalid score config %v: %v", scoreConfig, err)
-		//	log.Println(msg)
-		//	w.WriteHeader(http.StatusBadRequest)
-		//	_, _ = w.Write([]byte("all fields must be populated with a number between 0.0 and 10.0"))
-		//	return
-		//}
+		err = validateScoreConfig(scoreConfig)
+		if err != nil {
+			msg := fmt.Sprintf("invalid score config %v: %v", scoreConfig, err)
+			log.Println(msg)
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = w.Write([]byte("all fields must be populated with a number between 0.0 and 10.0"))
+			return
+		}
 
 		log.Println(fmt.Sprintf("rating players for current config: %v", scoreConfig))
 		//rate players using config
-		players := ratePlayers(scoreConfig, a.store)
+		players := a.ratePlayers(scoreConfig)
 
 		//marshall response body
 		bytes, err := yaml.Marshal(players)
@@ -88,23 +97,4 @@ func (a *App) Run() {
 		w.Header().Set("Content-Type", "application/yaml")
 		_, _ = w.Write(bytes)
 	})
-
-	//#upstream_pushing
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != "GET" {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			_, _ = w.Write([]byte("use root path to see API documentation"))
-			return
-		}
-
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "application/yaml")
-		log.Println("Skole!")
-		_, _ = w.Write([]byte("Skole!"))
-	})
-
-	if err := http.ListenAndServe(":80", nil); err != nil {
-		log.Println("failed to boot server")
-		log.Fatal(err)
-	}
 }
