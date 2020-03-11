@@ -36,7 +36,7 @@ func fetchFromLocal(t *trie.Trie) error {
 		return err
 	}
 
-	err = unmarshalAndSavePlayers(playersBytes, t)
+	err = UnmarshalAndSavePlayers(playersBytes, t)
 	if err != nil {
 		return err
 	}
@@ -59,7 +59,7 @@ func fetchFromS3(t *trie.Trie) error {
 		return err
 	}
 
-	err = unmarshalAndSavePlayers(playersBytes, t)
+	err = UnmarshalAndSavePlayers(playersBytes, t)
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func fetchFromS3(t *trie.Trie) error {
 	return nil
 }
 
-func unmarshalAndSavePlayers(playersBytes []byte, t *trie.Trie) error {
+func UnmarshalAndSavePlayers(playersBytes []byte, t *trie.Trie) error {
 	players := make([]model.Player, 0)
 	err := yaml.Unmarshal(playersBytes, &players)
 	if err != nil {

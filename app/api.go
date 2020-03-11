@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/robfig/cron/v3"
 	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -43,7 +44,7 @@ func (a *App) Initialize() bool {
 }
 
 func (a *App) Run() {
-	if err := http.ListenAndServe(":8090", a.Router); err != nil {
+	if err := http.ListenAndServe(":80", a.Router); err != nil {
 		log.Println("failed to boot server")
 		log.Fatal(err)
 	}
@@ -96,5 +97,30 @@ func initializeRoutes(a *App) {
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/yaml")
 		_, _ = w.Write(bytes)
+	})
+
+	a.Router.Methods("PUT").Path("/players").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("updating player stats data")
+
+		playerBytes, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			msg := fmt.Sprintf("error reading request body: %v", err)
+			log.Println(msg)
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = w.Write([]byte("all fields must be populated with a number between 0.0 and 10.0"))
+			return
+		}
+
+		err = UnmarshalAndSavePlayers(playerBytes, a.store)
+		if err != nil {
+			log.Println("error updating player stats data")
+			w.WriteHeader(http.StatusInternalServerError)
+			_, _ = w.Write([]byte("failed store players"))
+			return
+		}else{
+			w.WriteHeader(http.StatusOK)
+			w.Header().Set("Content-Type", "application/yaml")
+			_, _ = w.Write([]byte("successfully stored players"))
+		}
 	})
 }
