@@ -12,8 +12,8 @@ import (
 )
 
 type App struct {
-	store *trie.Trie
-	Router       *mux.Router
+	store  *trie.Trie
+	Router *mux.Router
 }
 
 func (a *App) Initialize() bool {
@@ -43,13 +43,13 @@ func (a *App) Initialize() bool {
 }
 
 func (a *App) Run() {
-	if err := http.ListenAndServe(":80", a.Router); err != nil {
+	if err := http.ListenAndServe(":8090", a.Router); err != nil {
 		log.Println("failed to boot server")
 		log.Fatal(err)
 	}
 }
 
-func initializeRoutes(a *App){
+func initializeRoutes(a *App) {
 	a.Router.Methods("GET").Path("/health").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		log.Println("Skole!")

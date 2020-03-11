@@ -3,6 +3,7 @@ module basketball
 go 1.13
 
 require (
+	github.com/aws/aws-sdk-go v1.29.19
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3
 	github.com/gorilla/mux v1.7.4

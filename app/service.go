@@ -1,71 +1,91 @@
 package app
 
 import (
+	"basketball/client"
 	"basketball/model"
-	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/golang-collections/collections/trie"
 	"github.com/meirf/gopart"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 	"time"
 )
 
-func fetchData(t *trie.Trie) error {
-	return fetchFromSource(t)
+func (a *App) ratePlayers(config model.ScoreConfig) []model.Player {
+	return scorePlayers(config, a.store)
 }
 
-//TODO: implement retry logic
-//#downstream_pull
-func fetchFromSource(t *trie.Trie) error {
-	key := os.Getenv("NBA_API_KEY")
-	if key == "" {
-		return errors.New("unable to load environment variables")
+func fetchData(t *trie.Trie) error {
+	env := os.Getenv("ENVIRONMENT")
+	switch env {
+	case "DEV":
+		return fetchFromLocal(t)
+	case "PROD":
+		return fetchFromS3(t)
+	default:
+		return errors.New("error loading ENVIRONMENT env variable")
 	}
+}
 
-	url := fmt.Sprintf("https://api.sportsdata.io/v3/nba/stats/json/PlayerSeasonStats/2020?key=%s", key)
-	res, err := http.Get(url)
+func fetchFromLocal(t *trie.Trie) error {
+	playersBytes, err := ioutil.ReadFile("1583510437.yaml")
 	if err != nil {
-		log.Println(fmt.Sprintf("error sending to %v", url))
-		return err
-	}
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		log.Println("unable to read player stats response")
+		log.Println("unable to read player stats from local file")
 		return err
 	}
 
-	players := make([]model.Player, 0)
-
-	err = json.Unmarshal(body, &players)
+	err = unmarshalAndSavePlayers(playersBytes, t)
 	if err != nil {
-		log.Println(string(body))
-		log.Println("unable to convert players")
 		return err
 	}
-
-	//#async
-	c := make(chan bool)
-	go func() {
-		//hash and store in trie
-		for indexRange := range gopart.Partition(len(players), 10) {
-			go save(players[indexRange.Low:indexRange.High], t)
-		}
-		c <- true
-	}()
-
-	<-c
 
 	return nil
 }
 
-func (a *App) ratePlayers(config model.ScoreConfig) []model.Player {
-	return scorePlayers(config, a.store)
+func fetchFromS3(t *trie.Trie) error {
+	client.InitializeSession()
+
+	key, err := client.GetLatestS3Key("sheldonsandbox-basketball", "player-stats/2020")
+	if err != nil {
+		log.Println("unable to find latest S3 Object Key")
+		return err
+	}
+
+	playersBytes, err := client.GetS3Object("sheldonsandbox-basketball", key)
+	if err != nil {
+		log.Println("unable to read player stats from S3")
+		return err
+	}
+
+	err = unmarshalAndSavePlayers(playersBytes, t)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func unmarshalAndSavePlayers(playersBytes []byte, t *trie.Trie) error {
+	players := make([]model.Player, 0)
+	err := yaml.Unmarshal(playersBytes, &players)
+	if err != nil {
+		log.Println("unable to convert players")
+		return err
+	}
+
+	c := make(chan bool)
+	go partitionSave(c, players, t)
+	<-c
+	return nil
+}
+
+func partitionSave(c chan bool, players []model.Player, t *trie.Trie) {
+	for indexRange := range gopart.Partition(len(players), 10) {
+		go save(players[indexRange.Low:indexRange.High], t)
+	}
+	c <- true
 }
 
 func save(players []model.Player, t *trie.Trie) {
