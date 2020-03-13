@@ -46,7 +46,7 @@ func TestScoreConfig_Score(t *testing.T) {
 		Pts: 1.0,
 	}
 	config.Score(&player)
-	assert.Equal(t, float32(379.76), player.Score)
+	assert.Equal(t, float32(354.76), player.Score)
 }
 
 func TestRound(t *testing.T) {

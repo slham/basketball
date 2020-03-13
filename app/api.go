@@ -44,7 +44,7 @@ func (a *App) Initialize() bool {
 }
 
 func (a *App) Run() {
-	if err := http.ListenAndServe(":80", a.Router); err != nil {
+	if err := http.ListenAndServe(":8090", a.Router); err != nil {
 		log.Println("failed to boot server")
 		log.Fatal(err)
 	}

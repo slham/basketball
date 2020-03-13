@@ -43,7 +43,7 @@ func (config *ScoreConfig) Score(player *Player) {
 	score += player.Ass * config.Ass
 	score += player.Stl * config.Stl
 	score += player.Blk * config.Blk
-	score += player.Tvs * config.Tvs
+	score -= player.Tvs * config.Tvs
 	score += player.Dds / numGames * config.Dds
 	score += player.Pts / numGames * config.Pts
 
