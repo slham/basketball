@@ -7,7 +7,7 @@ if [[ -z "$repo_uri" ]]; then
 fi
 
 echo "building executable"
-go-executable-build.bash basketball ./main
+bash go-executable-build.bash basketball ./main
 
 echo "building image"
 docker build --rm -t "basketball" --build-arg ex_path=linux/amd64 .
@@ -20,5 +20,8 @@ docker tag basketball:latest $repo_uri
 
 echo "pushing image"
 docker push $repo_uri:latest
+
+echo "deploying"
+aws ecs update-service --cluster sandbox-cluster --service basketball-service --force-new-deployment --profile tharivol
 
 echo "Finito!"
