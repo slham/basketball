@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/golang-collections/collections/trie"
 	"github.com/gorilla/mux"
-	"github.com/robfig/cron/v3"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -28,15 +27,6 @@ func (a *App) Initialize() bool {
 		log.Println("unable to fetch player data")
 		log.Fatal(err)
 	}
-	//TODO: remove when fetch and feed lambdas are built
-	c := cron.New()
-	_, err = c.AddFunc("CRON_TZ=America/New_York 00 11 * * *", func() {
-		err := fetchData(a.store)
-		if err != nil {
-			log.Println("unable to set up fetch cron job")
-			log.Println(err)
-		}
-	})
 
 	log.Println("Up and Running!")
 
