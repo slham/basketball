@@ -12,7 +12,7 @@ import (
 var sess *session.Session
 
 // Create aws session
-func InitializeSession(){
+func InitializeSession() {
 	sess = session.Must(session.NewSession(&aws.Config{
 		Region: aws.String("us-west-2"),
 	}))
@@ -38,11 +38,11 @@ func GetS3Object(bucket, key string) ([]byte, error) {
 }
 
 // Return the Key of the latest S3 object from the given bucket with the provided prefix
-func GetLatestS3Key(bucket, prefix string)(string, error){
+func GetLatestS3Key(bucket, prefix string) (string, error) {
 	cli := s3.New(sess)
 	log.Println("s3 client created")
 
-	params := &s3.ListObjectsV2Input {
+	params := &s3.ListObjectsV2Input{
 		Bucket: aws.String(bucket),
 		Prefix: aws.String(prefix),
 	}
@@ -60,8 +60,8 @@ func GetLatestS3Key(bucket, prefix string)(string, error){
 		if holder == nil {
 			key = *obj.Key
 			holder = obj.LastModified
-		}else{
-			if obj.LastModified.After(*holder){
+		} else {
+			if obj.LastModified.After(*holder) {
 				key = *obj.Key
 				holder = obj.LastModified
 			}

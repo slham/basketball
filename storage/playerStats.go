@@ -1,4 +1,4 @@
-package app
+package storage
 
 import (
 	"basketball/client"
@@ -13,17 +13,22 @@ import (
 	"time"
 )
 
-func (a *App) ratePlayers(config model.ScoreConfig) []model.Player {
-	return scorePlayers(config, a.store)
+var store *trie.Trie
+
+func Store() *trie.Trie {
+	return store
 }
 
-func fetchData(t *trie.Trie) error {
+func Initialize() error {
+	store = trie.New()
+	store.Init()
+
 	env := os.Getenv("ENVIRONMENT")
 	switch env {
 	case "DEV":
-		return fetchFromLocal(t)
+		return fetchFromLocal(store)
 	case "PROD":
-		return fetchFromS3(t)
+		return fetchFromS3(store)
 	default:
 		return errors.New("error loading ENVIRONMENT env variable")
 	}

@@ -1,4 +1,4 @@
-package app
+package valid
 
 import (
 	"basketball/model"
@@ -55,7 +55,7 @@ func TestValidateScoreConfig(t *testing.T) {
 	}
 
 	for _, table := range tables {
-		err := validateScoreConfig(table.config)
+		err := ValidateScoreConfig(table.config)
 		if err != nil {
 			assert.Equal(t, table.message, err.Error())
 		}

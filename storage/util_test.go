@@ -1,4 +1,4 @@
-package app
+package storage
 
 import (
 	"basketball/model"
@@ -139,7 +139,7 @@ func TestScorePlayers(t *testing.T) {
 		Pts: 1.0,
 	}
 
-	res := scorePlayers(config, testTrie)
+	res := ScorePlayers(config, testTrie)
 	assert.Equal(t, 2, len(res))
 	p1, p2 := res[0], res[1]
 	assert.Equal(t, true, p1.Id == 1)

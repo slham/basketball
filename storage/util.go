@@ -1,4 +1,4 @@
-package app
+package storage
 
 import (
 	"basketball/model"
@@ -24,7 +24,7 @@ func hash(player model.Player) ([16]byte, error) {
 	return md5.Sum(bytes), nil
 }
 
-func scorePlayers(config model.ScoreConfig, t *trie.Trie) []model.Player {
+func ScorePlayers(config model.ScoreConfig, t *trie.Trie) []model.Player {
 	var players = make([]model.Player, 0)
 
 	t.Do(func(k, v interface{}) bool {
