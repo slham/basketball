@@ -1,0 +1,8 @@
+---
+l:
+  mode: DEBUG
+runtime:
+  port: 80
+storage:
+  bucket: sheldonsandbox-basketball
+  prefix: player-stats/2020

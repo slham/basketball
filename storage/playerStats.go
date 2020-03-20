@@ -2,14 +2,13 @@ package storage
 
 import (
 	"basketball/client"
+	"basketball/env"
 	"basketball/model"
-	"errors"
 	"github.com/golang-collections/collections/trie"
 	"github.com/meirf/gopart"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
-	"os"
 	"time"
 )
 
@@ -19,57 +18,63 @@ func Store() *trie.Trie {
 	return store
 }
 
-func Initialize() error {
+func Initialize(config env.Config) bool {
 	store = trie.New()
 	store.Init()
 
-	env := os.Getenv("ENVIRONMENT")
-	switch env {
-	case "DEV":
-		return fetchFromLocal(store)
-	case "PROD":
-		return fetchFromS3(store)
+	switch config.Env {
+	case "dev":
+		return fetchFromLocal(store, config.Storage.FileName)
+	case "prod":
+		return fetchFromS3(store, config.Storage.Bucket, config.Storage.Prefix)
 	default:
-		return errors.New("error loading ENVIRONMENT env variable")
+		log.Println("error loading ENVIRONMENT env variable")
+		return false
 	}
 }
 
-func fetchFromLocal(t *trie.Trie) error {
-	playersBytes, err := ioutil.ReadFile("1583510437.yaml")
+func fetchFromLocal(t *trie.Trie, fileName string) bool {
+	playersBytes, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		log.Println("unable to read player stats from local file")
-		return err
+		log.Println(fileName)
+		log.Println(err)
+		return false
 	}
 
 	err = UnmarshalAndSavePlayers(playersBytes, t)
 	if err != nil {
-		return err
+		log.Println(err)
+		return false
 	}
 
-	return nil
+	return true
 }
 
-func fetchFromS3(t *trie.Trie) error {
+func fetchFromS3(t *trie.Trie, bucket, prefix string) bool {
 	client.InitializeSession()
 
-	key, err := client.GetLatestS3Key("sheldonsandbox-basketball", "player-stats/2020")
+	key, err := client.GetLatestS3Key(bucket, prefix)
 	if err != nil {
 		log.Println("unable to find latest S3 Object Key")
-		return err
+		log.Println(err)
+		return false
 	}
 
-	playersBytes, err := client.GetS3Object("sheldonsandbox-basketball", key)
+	playersBytes, err := client.GetS3Object(bucket, key)
 	if err != nil {
 		log.Println("unable to read player stats from S3")
-		return err
+		log.Println(err)
+		return false
 	}
 
 	err = UnmarshalAndSavePlayers(playersBytes, t)
 	if err != nil {
-		return err
+		log.Println(err)
+		return false
 	}
 
-	return nil
+	return true
 }
 
 func UnmarshalAndSavePlayers(playersBytes []byte, t *trie.Trie) error {
