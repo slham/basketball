@@ -38,7 +38,7 @@ func Load(env string) (Config, bool) {
 	}
 
 	//unmarshal config
-	err = yaml.Unmarshal([]byte(data), &config)
+	err = yaml.Unmarshal(data, &config)
 	if err != nil {
 		log.Fatalf("could not unmarshall yaml file %v", err)
 		return config, false

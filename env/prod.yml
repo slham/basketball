@@ -1,6 +1,6 @@
 ---
 l:
-  mode: DEBUG
+  mode: INFO
 runtime:
   port: 80
 storage:

@@ -5,7 +5,7 @@ import (
 	"basketball/handlers"
 	"basketball/storage"
 	"github.com/gorilla/mux"
-	"log"
+	"github.com/slham/toolbelt"
 	"net/http"
 )
 
@@ -15,37 +15,42 @@ type App struct {
 }
 
 func (a *App) Initialize(environment string) bool {
+	toolbelt.Info(nil, "application initializing")
+
 	config, ok := env.Load(environment)
 	if !ok {
 		return false
 	}
 
-	log.Println("application initializing")
-
 	a.Config = config
-	a.Router = mux.NewRouter()
-	a.initializeRoutes()
+
+	ok = toolbelt.Initialize(a.Config.L.Mode)
+	if !ok {
+		return false
+	}
 
 	ok = storage.Initialize(a.Config)
 	if !ok {
 		return false
 	}
 
-	log.Println("Up and Running!")
+	a.Router = mux.NewRouter()
+	a.initializeRoutes()
+	toolbelt.Info(nil, "Up and Running!")
 
 	return true
 }
 
 func (a *App) Run() bool {
 	if err := http.ListenAndServe(":"+a.Config.Runtime.Port, a.Router); err != nil {
-		log.Println("failed to boot server")
-		log.Println(err)
+		toolbelt.Error(nil, "failed to boot server: %v", err)
 		return false
 	}
 	return true
 }
 
 func (a *App) initializeRoutes() {
+	a.Router.Use(toolbelt.Logging)
 	a.Router.Methods("GET").Path("/health").HandlerFunc(handlers.HealthCheck)
 
 	a.Router.Methods("POST").Path("/ratings").HandlerFunc(handlers.RatePlayers)

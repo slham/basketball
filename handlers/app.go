@@ -1,12 +1,12 @@
 package handlers
 
 import (
-	"log"
+	"github.com/slham/toolbelt"
 	"net/http"
 )
 
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	log.Println("Skole!")
+	toolbelt.Debug(r.Context(), "Skole!")
 	_, _ = w.Write([]byte("Skole!"))
 }

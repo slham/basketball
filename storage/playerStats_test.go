@@ -16,7 +16,7 @@ func TestSave(t *testing.T) {
 	testTrie := trie.New()
 	testing.Init()
 
-	save(players, testTrie)
+	save(nil, players, testTrie)
 
 	assert.Equal(t, len(players), testTrie.Len())
 	testTrie.Do(func(k, v interface{}) bool {

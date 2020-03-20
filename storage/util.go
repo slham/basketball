@@ -5,7 +5,6 @@ import (
 	"crypto/md5"
 	"github.com/golang-collections/collections/trie"
 	"gopkg.in/yaml.v2"
-	"log"
 	"sort"
 )
 
@@ -18,7 +17,6 @@ func (score ByScore) Less(i, j int) bool { return score[i].Score > score[j].Scor
 func hash(player model.Player) ([16]byte, error) {
 	bytes, err := yaml.Marshal(player)
 	if err != nil {
-		log.Println("unable to hash player")
 		return [16]byte{}, err
 	}
 	return md5.Sum(bytes), nil
