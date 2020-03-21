@@ -5,7 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"github.com/slham/toolbelt"
+	"github.com/slham/toolbelt/l"
 	"time"
 )
 
@@ -22,7 +22,7 @@ func InitializeSession() {
 func GetS3Object(bucket, key string) ([]byte, error) {
 	// Create an downloader with the session and default options
 	downloader := s3manager.NewDownloader(sess)
-	toolbelt.Debug(nil, "downloader created")
+	l.Debug(nil, "downloader created")
 
 	// Store object in buffer
 	buff := &aws.WriteAtBuffer{}
@@ -31,7 +31,7 @@ func GetS3Object(bucket, key string) ([]byte, error) {
 		Key:    aws.String(key),
 	})
 	if err != nil {
-		toolbelt.Error(nil, "could not fetch object from S3: %v", err)
+		l.Error(nil, "could not fetch object from S3: %v", err)
 		return make([]byte, 0), err
 	}
 
@@ -41,7 +41,7 @@ func GetS3Object(bucket, key string) ([]byte, error) {
 // Return the Key of the latest S3 object from the given bucket with the provided prefix
 func GetLatestS3Key(bucket, prefix string) (string, error) {
 	cli := s3.New(sess)
-	toolbelt.Debug(nil, "S3 client created")
+	l.Debug(nil, "S3 client created")
 
 	params := &s3.ListObjectsV2Input{
 		Bucket: aws.String(bucket),
@@ -49,7 +49,7 @@ func GetLatestS3Key(bucket, prefix string) (string, error) {
 	}
 	objs, err := cli.ListObjectsV2(params)
 	if err != nil || objs == nil {
-		toolbelt.Error(nil, "unable to list S3 bucket objects")
+		l.Error(nil, "unable to list S3 bucket objects")
 		return "", err
 	}
 

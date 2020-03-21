@@ -7,7 +7,7 @@ import (
 	"context"
 	"github.com/golang-collections/collections/trie"
 	"github.com/meirf/gopart"
-	"github.com/slham/toolbelt"
+	"github.com/slham/toolbelt/l"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"time"
@@ -29,7 +29,7 @@ func Initialize(config env.Config) bool {
 	case "prod":
 		return fetchFromS3(store, config.Storage.Bucket, config.Storage.Prefix)
 	default:
-		toolbelt.Error(nil, "invalid environment configuration")
+		l.Error(nil, "invalid environment configuration")
 		return false
 	}
 }
@@ -37,7 +37,7 @@ func Initialize(config env.Config) bool {
 func fetchFromLocal(t *trie.Trie, fileName string) bool {
 	playersBytes, err := ioutil.ReadFile(fileName)
 	if err != nil {
-		toolbelt.Error(nil, "unable to read player stats from local file: %s", fileName)
+		l.Error(nil, "unable to read player stats from local file: %s", fileName)
 		return false
 	}
 
@@ -74,7 +74,7 @@ func UnmarshalAndSavePlayers(ctx context.Context, playersBytes []byte, t *trie.T
 	players := make([]model.Player, 0)
 	err := yaml.Unmarshal(playersBytes, &players)
 	if err != nil {
-		toolbelt.Error(ctx, "unable to convert players: %v", err)
+		l.Error(ctx, "unable to convert players: %v", err)
 		return err
 	}
 
@@ -92,14 +92,14 @@ func partitionSave(ctx context.Context, c chan bool, players []model.Player, t *
 }
 
 func save(ctx context.Context, players []model.Player, t *trie.Trie) {
-	toolbelt.Debug(ctx, "storing players")
+	l.Debug(ctx, "storing players")
 	for _, player := range players {
 		now := time.Now()
 		player.CreatedDateTime = now
 		player.UpdatedDateTime = now
 		key, err := hash(player)
 		if err != nil {
-			toolbelt.Error(ctx, "could not hash player: %v", err)
+			l.Error(ctx, "could not hash player: %v", err)
 		}
 		t.Insert(key, player)
 	}

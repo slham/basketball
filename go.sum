@@ -24,8 +24,6 @@ github.com/pborman/uuid v1.2.0/go.mod h1:X/NO0urCmaxf9VXbdlT7C2Yzkj2IKimNn4k+gtP
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/slham/toolbelt v0.0.0-20200320041403-128c7907b0ce h1:/BhNc6pB0MERLemjTr3I5TckGZbVHeaIA2yWK/x8Vo4=
-github.com/slham/toolbelt v0.0.0-20200320041403-128c7907b0ce/go.mod h1:hX+v/bMeOFvwvSEiqPEaCrByAQ8GqZK7t0rPyz/glsk=
 github.com/slham/toolbelt v0.0.0-20200320054124-770c20a5be95 h1:X0OBAPLMbI7diWEZe1sDqQiYgoieLFImdJJThKggEa0=
 github.com/slham/toolbelt v0.0.0-20200320054124-770c20a5be95/go.mod h1:hX+v/bMeOFvwvSEiqPEaCrByAQ8GqZK7t0rPyz/glsk=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
