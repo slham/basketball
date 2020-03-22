@@ -1,6 +1,6 @@
 ---
 l:
-  mode: INFO
+  level: INFO
 runtime:
   port: 80
 storage:

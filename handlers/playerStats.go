@@ -19,7 +19,7 @@ func RatePlayers(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		l.Error(ctx, "reading request body: %v", err)
 		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("all fields must be populated with a number between 0.0 and 10.0"))
+		_, _ = w.Write([]byte("invalid payload"))
 		return
 	}
 
@@ -59,7 +59,7 @@ func StorePlayers(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		l.Error(ctx, "reading request body: %v", err)
 		w.WriteHeader(http.StatusBadRequest)
-		_, _ = w.Write([]byte("all fields must be populated with a number between 0.0 and 10.0"))
+		_, _ = w.Write([]byte("unable to read payload"))
 		return
 	}
 

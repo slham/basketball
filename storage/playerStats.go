@@ -5,11 +5,16 @@ import (
 	"basketball/env"
 	"basketball/model"
 	"context"
+	"fmt"
 	"github.com/golang-collections/collections/trie"
 	"github.com/meirf/gopart"
 	"github.com/slham/toolbelt/l"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strings"
+	"sync"
 	"time"
 )
 
@@ -35,9 +40,16 @@ func Initialize(config env.Config) bool {
 }
 
 func fetchFromLocal(t *trie.Trie, fileName string) bool {
-	playersBytes, err := ioutil.ReadFile(fileName)
+	wd, _ := os.Getwd()
+	for !strings.HasSuffix(wd, "basketball") {
+		wd = filepath.Dir(wd)
+	}
+	path := fmt.Sprintf("%s/%s", wd, fileName)
+	//envPath, _ := filepath.Abs(path)
+	l.Debug(nil, "path:%s", path)
+	playersBytes, err := ioutil.ReadFile(path)
 	if err != nil {
-		l.Error(nil, "unable to read player stats from local file: %s", fileName)
+		l.Error(nil, "unable to read player stats from local file: %s", path)
 		return false
 	}
 
@@ -78,20 +90,21 @@ func UnmarshalAndSavePlayers(ctx context.Context, playersBytes []byte, t *trie.T
 		return err
 	}
 
-	c := make(chan bool)
-	go partitionSave(ctx, c, players, t)
-	<-c
+	partitionSave(ctx, players, t)
 	return nil
 }
 
-func partitionSave(ctx context.Context, c chan bool, players []model.Player, t *trie.Trie) {
+func partitionSave(ctx context.Context, players []model.Player, t *trie.Trie) {
+	var wg sync.WaitGroup
 	for indexRange := range gopart.Partition(len(players), 10) {
-		go save(ctx, players[indexRange.Low:indexRange.High], t)
+		wg.Add(1)
+		go save(ctx, players[indexRange.Low:indexRange.High], t, &wg)
 	}
-	c <- true
+	wg.Wait()
 }
 
-func save(ctx context.Context, players []model.Player, t *trie.Trie) {
+func save(ctx context.Context, players []model.Player, t *trie.Trie, wg *sync.WaitGroup) {
+	defer wg.Done()
 	l.Debug(ctx, "storing players")
 	for _, player := range players {
 		now := time.Now()
@@ -100,6 +113,7 @@ func save(ctx context.Context, players []model.Player, t *trie.Trie) {
 		key, err := hash(player)
 		if err != nil {
 			l.Error(ctx, "could not hash player: %v", err)
+			continue
 		}
 		t.Insert(key, player)
 	}

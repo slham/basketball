@@ -24,7 +24,7 @@ func (a *App) Initialize(environment string) bool {
 
 	a.Config = config
 
-	ok = l.Initialize(a.Config.L.Mode)
+	ok = l.Initialize(a.Config.L.Level)
 	if !ok {
 		return false
 	}
