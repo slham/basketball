@@ -10,7 +10,7 @@ echo "building executable"
 bash go-executable-build.bash basketball ./main
 
 echo "building image"
-docker build --rm -t "basketball" --build-arg ex_path=linux/amd64 .
+docker build --rm -t "basketball" --build-arg ex_path=linux/amd64 --build-arg env=prod .
 
 echo "logging in to aws"
 $(aws ecr get-login --no-include-email --region us-west-2 --profile tharivol)

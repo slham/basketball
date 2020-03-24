@@ -36,11 +36,11 @@ func TestFetchFromLocal(t *testing.T) {
 	ok := fetchFromLocal(testTrie, "1583510437-test.yaml")
 	assert.Equal(t, ok, true)
 	assert.Equal(t, len(ids), testTrie.Len())
-	testTrie.Do(func(k,v interface{}) bool{
+	testTrie.Do(func(k, v interface{}) bool {
 		p := v.(model.Player)
 		found := false
 		for _, id := range ids {
-			if p.Id == id{
+			if p.Id == id {
 				found = true
 			}
 		}
@@ -48,7 +48,7 @@ func TestFetchFromLocal(t *testing.T) {
 	})
 }
 
-func TestFetchFromLocalNoFile(t *testing.T){
+func TestFetchFromLocalNoFile(t *testing.T) {
 	testTrie := trie.New()
 	testTrie.Init()
 	ok := fetchFromLocal(testTrie, "blah")

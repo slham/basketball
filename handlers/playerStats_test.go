@@ -50,14 +50,14 @@ func TestRatePlayersNoPlayers(t *testing.T) {
 	withLogging := l.Logging(http.HandlerFunc(RatePlayers))
 	withLogging.ServeHTTP(rr, req)
 
-	var players []model.Player
-	err = yaml.Unmarshal(rr.Body.Bytes(), &players)
+	var ratingsRes RatePlayersResponse
+	err = yaml.Unmarshal(rr.Body.Bytes(), &ratingsRes)
 	if err != nil {
 		t.Error(err)
 	}
 
 	assert.Equal(t, http.StatusOK, rr.Code)
-	assert.Equal(t, 0, len(players))
+	assert.Equal(t, 0, len(ratingsRes.Players))
 }
 
 func handelError(err error, t *testing.T) bool {
@@ -106,16 +106,23 @@ func TestRatePlayers(t *testing.T) {
 	withLogging := l.Logging(http.HandlerFunc(RatePlayers))
 	withLogging.ServeHTTP(rr, req)
 
-	var players []model.Player
-	err = yaml.Unmarshal(rr.Body.Bytes(), &players)
+	var ratingsRes RatePlayersResponse
+	err = yaml.Unmarshal(rr.Body.Bytes(), &ratingsRes)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
+	players := ratingsRes.Players
+	team := ratingsRes.Team
+
 	assert.Equal(t, http.StatusOK, rr.Code)
 	for i := 0; i < len(players)-1; i++ {
 		assert.Equal(t, players[i].Score > players[i+1].Score, true)
+	}
+
+	for i := 0; i < len(team)-1; i++ {
+		assert.Equal(t, team[i].Score > team[i+1].Score, true)
 	}
 }
 
@@ -133,7 +140,7 @@ func initializeContext(t *testing.T, withPlayers bool) {
 	return
 }
 
-func TestRatePlayersInvalidPayload(t *testing.T){
+func TestRatePlayersInvalidPayload(t *testing.T) {
 	req, err := http.NewRequest("POST", "/ratings", bytes.NewReader([]byte("failure")))
 	if handelError(err, t) {
 		return
@@ -149,7 +156,7 @@ func TestRatePlayersInvalidPayload(t *testing.T){
 	assert.Equal(t, "invalid payload", rr.Body.String())
 }
 
-func TestRatePlayersInvalidScoreConfig(t *testing.T){
+func TestRatePlayersInvalidScoreConfig(t *testing.T) {
 	scoreConfig := model.ScoreConfig{
 		Min: -1.0,
 		Fgm: -1.0,
@@ -193,10 +200,10 @@ func TestRatePlayersInvalidScoreConfig(t *testing.T){
 
 func TestStorePlayers(t *testing.T) {
 	players := []model.Player{
-		{Id:0}, {Id:1}, {Id:2},
+		{Id: 0}, {Id: 1}, {Id: 2},
 	}
 	playerBytes, err := yaml.Marshal(players)
-	if handelError(err, t){
+	if handelError(err, t) {
 		return
 	}
 
@@ -213,4 +220,3 @@ func TestStorePlayers(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rr.Code)
 	assert.Equal(t, "successfully stored players", rr.Body.String())
 }
-

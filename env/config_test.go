@@ -14,7 +14,7 @@ func TestLoadDev(t *testing.T) {
 	assert.Equal(t, config.Storage.Bucket, "")
 	assert.Equal(t, config.Storage.FileName, "1583510437.yaml")
 	assert.Equal(t, config.Env, "dev")
-	assert.Equal(t, config.Runtime.Port, "80")
+	assert.Equal(t, config.Runtime.Port, "8090")
 }
 
 func TestLoadProd(t *testing.T) {

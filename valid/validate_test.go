@@ -9,7 +9,7 @@ import (
 
 func TestValidateScoreConfig(t *testing.T) {
 	tables := []struct {
-		config  model.ScoreConfig
+		config model.ScoreConfig
 		reason string
 	}{
 		{model.ScoreConfig{
@@ -31,7 +31,7 @@ func TestValidateScoreConfig(t *testing.T) {
 			Dds: -1.0,
 			Pts: -1.0,
 		},
-		"min",
+			"min",
 		},
 		{model.ScoreConfig{
 			Min: 18.0,
@@ -83,7 +83,7 @@ func TestValidateScoreConfig(t *testing.T) {
 			for _, tag := range err.(validator.ValidationErrors) {
 				assert.Equal(t, table.reason, validator.FieldError(tag).Tag())
 			}
-		}else {
+		} else {
 			t.Log("valid ScoreConfig")
 		}
 	}

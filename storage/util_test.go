@@ -148,3 +148,25 @@ func TestScorePlayers(t *testing.T) {
 	assert.Equal(t, true, p2.Score > 0)
 	assert.Equal(t, true, p1.Score > p2.Score)
 }
+
+func TestFillTeam(t *testing.T) {
+	players := []model.Player{
+		{Name: "James Harden", Position: "PG"},
+		{Name: "Damian Lillard", Position: "PG"},
+		{Name: "Trae", Position: "PG"},
+		{Name: "Kyrie Irving", Position: "PG"},
+		{Name: "Luka Doncic", Position: "PG"},
+		{Name: "Bradley Beal", Position: "SG"},
+		{Name: "Kawhi Leonard", Position: "SF"},
+		{Name: "Karl-Anthony Towns", Position: "C"},
+		{Name: "LeBron James", Position: "SF"},
+		{Name: "Giannis Antetokounmpo", Position: "PF"},
+		{Name: "Anthony Davis", Position: "PF"},
+		{Name: "Russell Westbrook", Position: "PG"},
+		{Name: "Brandon Ingram", Position: "SF"},
+		{Name: "Nikola Jokic", Position: "C"},
+	}
+
+	team := FillTeam(nil, players)
+	assert.Equal(t, 10, len(team))
+}

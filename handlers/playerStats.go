@@ -10,6 +10,11 @@ import (
 	"net/http"
 )
 
+type RatePlayersResponse struct {
+	Team    []model.Player
+	Players []model.Player
+}
+
 func RatePlayers(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	l.Debug(ctx, "ratings request received")
@@ -36,8 +41,16 @@ func RatePlayers(w http.ResponseWriter, r *http.Request) {
 	//rate players using config
 	players := storage.ScorePlayers(scoreConfig, storage.Store())
 
+	//make suggested team
+	team := storage.FillTeam(ctx, players)
+
+	response := RatePlayersResponse{
+		Team:    team,
+		Players: players,
+	}
+
 	//marshall response body
-	bytes, err := yaml.Marshal(players)
+	bytes, err := yaml.Marshal(response)
 	if err != nil {
 		l.Error(ctx, "responding with rated players: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)

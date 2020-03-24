@@ -30,6 +30,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/slham/toolbelt v0.0.0-20200321221822-2de0f0662a8f h1:F24GYSzkL7LOLvDhi3pPVwP5Gd8pFmwm8+VhB/a+flo=
 github.com/slham/toolbelt v0.0.0-20200321221822-2de0f0662a8f/go.mod h1:hX+v/bMeOFvwvSEiqPEaCrByAQ8GqZK7t0rPyz/glsk=
+github.com/slham/toolbelt v0.0.0-20200322230836-85b83eb6dd94 h1:F3OKn70BGPCEpSQ2CGAvUZQVKr7YjQnptDAANAciADg=
+github.com/slham/toolbelt v0.0.0-20200322230836-85b83eb6dd94/go.mod h1:hX+v/bMeOFvwvSEiqPEaCrByAQ8GqZK7t0rPyz/glsk=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJyk=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
