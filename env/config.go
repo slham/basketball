@@ -1,13 +1,8 @@
 package env
 
 import (
-	"fmt"
 	"github.com/slham/toolbelt/l"
-	"gopkg.in/yaml.v2"
-	"io/ioutil"
 	"os"
-	"path/filepath"
-	"strings"
 )
 
 type Config struct {
@@ -25,30 +20,36 @@ type Config struct {
 	} `yaml:"storage"`
 }
 
-func Load(env string) (Config, bool) {
+func Load() (Config, bool) {
 	//load config file
 	var config Config
-	config.Env = env
-	wd, _ := os.Getwd()
-	for !strings.HasSuffix(wd, "basketball") {
-		wd = filepath.Dir(wd)
-	}
-	path := fmt.Sprintf("%s/env/%s.yml", wd, env)
+	//env := os.Getenv("ENVIRONMENT")
+	//config.Env = env
+	//wd, _ := os.Getwd()
+	//for !strings.HasSuffix(wd, "basketball") {
+	//	wd = filepath.Dir(wd)
+	//}
+	//path := fmt.Sprintf("./env/%s.yml", env)
 	//envPath, _ := filepath.Abs(path)
-	l.Debug(nil, "path:%s", path)
-
-	data, err := ioutil.ReadFile(path)
-	if err != nil {
-		l.Error(nil, "could not read env config file %v", err)
-		return config, false
-	}
-
-	//unmarshal config
-	err = yaml.Unmarshal(data, &config)
-	if err != nil {
-		l.Error(nil, "could not unmarshall yaml file %v", err)
-		return config, false
-	}
+	//l.Debug(nil, "path:%s :: envPath:%s", path, envPath)
+	//
+	//data, err := ioutil.ReadFile(envPath)
+	//if err != nil {
+	//	l.Error(nil, "could not read env config file from %s %v", envPath, err)
+		config.Runtime.Port = os.Getenv("RUNTIME_PORT")
+		config.Storage.FileName = os.Getenv("STORAGE_FILENAME")
+		config.Storage.Bucket = os.Getenv("STORAGE_BUCKET")
+		config.Storage.Prefix = os.Getenv("STORAGE_PREFIX")
+		config.L.Level = l.Level(os.Getenv("LOG_LEVEL"))
+	//	return config, true
+	//}
+	//
+	////unmarshal config
+	//err = yaml.Unmarshal(data, &config)
+	//if err != nil {
+	//	l.Error(nil, "could not unmarshall yaml file %v", err)
+	//	return config, false
+	//}
 
 	return config, true
 }

@@ -2,22 +2,18 @@ package main
 
 import (
 	"basketball/app"
-	"flag"
 	"os"
 )
 
 func main() {
-	env := flag.String("env", "local", "a string")
-	flag.Parse()
-
 	basketballPlayerRater := app.App{}
-	ok := basketballPlayerRater.Initialize(*env)
+	ok := basketballPlayerRater.Initialize()
 	if !ok {
-		os.Exit(2)
+		os.Exit(1)
 	}
 
 	ok = basketballPlayerRater.Run()
 	if !ok {
-		os.Exit(3)
+		os.Exit(1)
 	}
 }

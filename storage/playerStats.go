@@ -29,9 +29,9 @@ func Initialize(config env.Config) bool {
 	store.Init()
 
 	switch config.Env {
-	case "dev":
+	case "DEV":
 		return fetchFromLocal(store, config.Storage.FileName)
-	case "prod":
+	case "PROD":
 		return fetchFromS3(store, config.Storage.Bucket, config.Storage.Prefix)
 	default:
 		l.Error(nil, "invalid environment configuration")

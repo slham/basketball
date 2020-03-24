@@ -49,7 +49,7 @@ func GetLatestS3Key(bucket, prefix string) (string, error) {
 	}
 	objs, err := cli.ListObjectsV2(params)
 	if err != nil || objs == nil {
-		l.Error(nil, "unable to list S3 bucket objects")
+		l.Error(nil, "unable to list S3 bucket objects %s::%s", bucket, prefix)
 		return "", err
 	}
 

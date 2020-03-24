@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/slham/toolbelt/l"
 	"net/http"
+	"os"
 )
 
 type App struct {
@@ -14,25 +15,26 @@ type App struct {
 	Router *mux.Router
 }
 
-func (a *App) Initialize(environment string) bool {
+func (a *App) Initialize() bool {
 	l.Info(nil, "application initializing")
 
-	config, ok := env.Load(environment)
+	//config, ok := env.Load()
+	//if !ok {
+	//	return false
+	//}
+
+	a.Config.Env = os.Getenv("ENVIRONMENT")
+	a.Config.L.Level = l.Level(os.Getenv("LOG_LEVEL"))
+	a.Config.Runtime.Port = os.Getenv("RUNTIME_PORT")
+	a.Config.Storage.Bucket = os.Getenv("STORAGE_BUCKET")
+	a.Config.Storage.Prefix = os.Getenv("STORAGE_PREFIX")
+
+	ok := l.Initialize(a.Config.L.Level)
 	if !ok {
 		return false
 	}
 
-	a.Config = config
-
-	ok = l.Initialize(a.Config.L.Level)
-	if !ok {
-		return false
-	}
-
-	ok = storage.Initialize(a.Config)
-	if !ok {
-		return false
-	}
+	_ = storage.Initialize(a.Config)
 
 	a.Router = mux.NewRouter()
 	a.initializeRoutes()

@@ -11,8 +11,8 @@ import (
 )
 
 type RatePlayersResponse struct {
-	Team    []model.Player
-	Players []model.Player
+	Team    []model.Player `yaml:"team"`
+	Players []model.Player `yaml:"players"`
 }
 
 func RatePlayers(w http.ResponseWriter, r *http.Request) {
@@ -48,6 +48,8 @@ func RatePlayers(w http.ResponseWriter, r *http.Request) {
 		Team:    team,
 		Players: players,
 	}
+
+	l.Debug(ctx, "response: %v", response)
 
 	//marshall response body
 	bytes, err := yaml.Marshal(response)
