@@ -131,7 +131,7 @@ func initializeContext(t *testing.T, withPlayers bool) {
 	if withPlayers {
 		var config env.Config
 		config.Storage.FileName = "1583510437-test.yaml"
-		config.Env = "dev"
+		config.Env = "DEV"
 		ok := storage.Initialize(config)
 		if !ok {
 			t.Error("could not set up storage")

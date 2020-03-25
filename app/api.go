@@ -18,23 +18,24 @@ type App struct {
 func (a *App) Initialize() bool {
 	l.Info(nil, "application initializing")
 
-	//config, ok := env.Load()
-	//if !ok {
-	//	return false
-	//}
-
 	a.Config.Env = os.Getenv("ENVIRONMENT")
 	a.Config.L.Level = l.Level(os.Getenv("LOG_LEVEL"))
 	a.Config.Runtime.Port = os.Getenv("RUNTIME_PORT")
 	a.Config.Storage.Bucket = os.Getenv("STORAGE_BUCKET")
 	a.Config.Storage.Prefix = os.Getenv("STORAGE_PREFIX")
+	a.Config.Storage.FileName = os.Getenv("STORAGE_FILENAME")
 
 	ok := l.Initialize(a.Config.L.Level)
 	if !ok {
+		l.Error(nil, "failed to initialize logging middleware")
 		return false
 	}
 
-	_ = storage.Initialize(a.Config)
+	ok = storage.Initialize(a.Config)
+	if !ok {
+		l.Error(nil, "failed to initialize storage")
+		return false
+	}
 
 	a.Router = mux.NewRouter()
 	a.initializeRoutes()

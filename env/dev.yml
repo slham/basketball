@@ -1,7 +1,0 @@
----
-l:
-  level: DEBUG
-runtime:
-  port: 8090
-storage:
-  fileName: 1583510437.yaml
