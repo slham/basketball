@@ -11,6 +11,7 @@ require (
 	github.com/jmespath/go-jmespath v0.3.0 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/meirf/gopart v0.0.0-20180520194036-37e9492a85a8
+	github.com/rs/cors v1.7.0
 	github.com/slham/toolbelt v0.0.0-20200322230836-85b83eb6dd94
 	github.com/stretchr/testify v1.5.1
 	gopkg.in/go-playground/assert.v1 v1.2.1

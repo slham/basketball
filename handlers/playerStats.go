@@ -4,8 +4,8 @@ import (
 	"basketball/model"
 	"basketball/storage"
 	"basketball/valid"
+	"encoding/json"
 	"github.com/slham/toolbelt/l"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"net/http"
 )
@@ -20,7 +20,7 @@ func RatePlayers(w http.ResponseWriter, r *http.Request) {
 	l.Debug(ctx, "ratings request received")
 
 	var scoreConfig model.ScoreConfig
-	err := yaml.NewDecoder(r.Body).Decode(&scoreConfig)
+	err := json.NewDecoder(r.Body).Decode(&scoreConfig)
 	if err != nil {
 		l.Error(ctx, "reading request body: %v", err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -52,7 +52,7 @@ func RatePlayers(w http.ResponseWriter, r *http.Request) {
 	l.Debug(ctx, "response: %v", response)
 
 	//marshall response body
-	bytes, err := yaml.Marshal(response)
+	bytes, err := json.Marshal(response)
 	if err != nil {
 		l.Error(ctx, "responding with rated players: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -62,7 +62,7 @@ func RatePlayers(w http.ResponseWriter, r *http.Request) {
 
 	//respond with players
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/yaml")
+	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(bytes)
 }
 

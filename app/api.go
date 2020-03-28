@@ -5,6 +5,7 @@ import (
 	"basketball/handlers"
 	"basketball/storage"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"github.com/slham/toolbelt/l"
 	"net/http"
 	"os"
@@ -45,7 +46,7 @@ func (a *App) Initialize() bool {
 }
 
 func (a *App) Run() bool {
-	if err := http.ListenAndServe(":"+a.Config.Runtime.Port, a.Router); err != nil {
+	if err := http.ListenAndServe(":"+a.Config.Runtime.Port, cors.Default().Handler(a.Router)); err != nil {
 		l.Error(nil, "failed to boot server: %v", err)
 		return false
 	}

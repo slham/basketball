@@ -28,6 +28,8 @@ github.com/pborman/uuid v1.2.0/go.mod h1:X/NO0urCmaxf9VXbdlT7C2Yzkj2IKimNn4k+gtP
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/rs/cors v1.7.0 h1:+88SsELBHx5r+hZ8TCkggzSstaWNbDvThkVK8H6f9ik=
+github.com/rs/cors v1.7.0/go.mod h1:gFx+x8UowdsKA9AchylcLynDq+nNFfI8FkUZdN/jGCU=
 github.com/slham/toolbelt v0.0.0-20200321221822-2de0f0662a8f h1:F24GYSzkL7LOLvDhi3pPVwP5Gd8pFmwm8+VhB/a+flo=
 github.com/slham/toolbelt v0.0.0-20200321221822-2de0f0662a8f/go.mod h1:hX+v/bMeOFvwvSEiqPEaCrByAQ8GqZK7t0rPyz/glsk=
 github.com/slham/toolbelt v0.0.0-20200322230836-85b83eb6dd94 h1:F3OKn70BGPCEpSQ2CGAvUZQVKr7YjQnptDAANAciADg=
