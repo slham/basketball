@@ -29,5 +29,5 @@ type Player struct {
 	Gms             int       `json:"Games,omitempty" yaml:"gms,omitempty"`
 	CreatedDateTime time.Time `yaml:"createdDateTime"`
 	UpdatedDateTime time.Time `yaml:"updatedDateTime"`
-	Score           float32   `yaml:"score"`
+	Score           float32   `json:"Score,omitempty" yaml:"score"`
 }

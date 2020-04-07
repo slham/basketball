@@ -26,6 +26,8 @@ func (a *App) Initialize() bool {
 	a.Config.Storage.Prefix = os.Getenv("STORAGE_PREFIX")
 	a.Config.Storage.FileName = os.Getenv("STORAGE_FILENAME")
 
+	l.Debug(nil, "application configuration: %v", a.Config)
+
 	ok := l.Initialize(a.Config.L.Level)
 	if !ok {
 		l.Error(nil, "failed to initialize logging middleware")
